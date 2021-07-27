@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-prod": "NODE_ENV=production node ./src/server.js",
-    "start": "nodemon ./src/server.js",
+    "start-prod": "NODE_ENV=production node ./src/index.js",
+    "start": "nodemon ./src/index.js",
     "lint": "eslint ./src"
   },
   "author": "",
