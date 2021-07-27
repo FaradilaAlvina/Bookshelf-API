@@ -1,6 +1,7 @@
 const books = require('./books')
 const { nanoid } = require('nanoid')
 
+// Add Book With Complete Data
 const addBooksHandler = (request, h) => {
   const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload
 
@@ -9,6 +10,7 @@ const addBooksHandler = (request, h) => {
   const updatedAt = insertedAt
   const finished = (pageCount === readPage)
 
+  // Add book without name
   if (name === '' || name === null || name === undefined) {
     const response = h.response({
       status: 'fail',
@@ -17,6 +19,8 @@ const addBooksHandler = (request, h) => {
     response.code(400)
     return response
   }
+
+  // Add book with Page Read more than Page Count
   if (readPage > pageCount) {
     const response = h.response({
       status: 'fail',
@@ -27,7 +31,7 @@ const addBooksHandler = (request, h) => {
   }
 
   const newBook = {
-    id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt
+    id, name, year, author, summary, publisher, pageCount, readPage, finished, reading, insertedAt, updatedAt
   }
   books.push(newBook)
   const isSuccess = books.filter((book) => book.id === id).length > 0
@@ -53,6 +57,7 @@ const addBooksHandler = (request, h) => {
   return response
 }
 
+// Get All Book
 const getAllBooks = () => ({
   status: 'success',
   data: {
@@ -64,28 +69,32 @@ const getAllBooks = () => ({
   }
 })
 
+// Get detail Books with Id
 const getBooksById = (request, h) => {
   const { bookId } = request.params
 
   const book = books.filter((b) => b.id === bookId)[0]
 
   if (book !== undefined) {
-    return {
+    const response = h.response({
       status: 'success',
       data: {
         book
       }
-    }
+    })
+    response.code(200)
+    return response
+  } else {
+    const response = h.response({
+      status: 'fail',
+      message: 'Buku tidak ditemukan'
+    })
+    response.code(404)
+    return response
   }
-
-  const response = h.response({
-    status: 'fail',
-    message: 'Buku tidak ditemukan'
-  })
-  response.code(404)
-  return response
 }
 
+// Update Book
 const EditingBookDataById = (request, h) => {
   const { bookId } = request.params
 
@@ -122,8 +131,8 @@ const EditingBookDataById = (request, h) => {
       publisher,
       pageCount,
       readPage,
-      reading,
       finished,
+      reading,
       updatedAt
     }
     const response = h.response({
@@ -132,7 +141,7 @@ const EditingBookDataById = (request, h) => {
     })
     response.code(200)
     return response
-  } else {
+  } else if (index === -1) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal memperbarui buku. Id tidak ditemukan'
@@ -142,6 +151,7 @@ const EditingBookDataById = (request, h) => {
   }
 }
 
+// Delete Book
 const deleteBookById = (request, h) => {
   const { bookId } = request.params
 
